@@ -4,12 +4,11 @@ class Gaussian:
 	"""
 	An object of this class is a 2D elliptical gaussian
 	"""
-	def __init__(self):
+	def __init__(self, params=[0., 0., 1., 1., 1., 0.]):
 		"""
 		Constructor sets up a standard gaussian
 		"""
-		self.xc, self.yc, self.mass, self.width, self.q, self.theta =\
-						0., 0., 1., 1., 1., 0.
+		self.xc, self.yc, self.mass, self.width, self.q, self.theta = params
 
 	def evaluate(self, x, y):
 		"""
