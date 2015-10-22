@@ -31,7 +31,6 @@ function initialise!(track::Track)
 			track.y[i, j] = 0.0
 		end
 	end
-	track.y[1, 1] = 1.0
 	return nothing
 end
 
@@ -55,7 +54,7 @@ function update!(track::Track; dt::Float64=0.01)
 	# Do the update
 	for(j in 1:size(d2)[2])
 		for(i in 1:size(d2)[1])
-			track.y[i, j] += dt*d2[i, j]
+			track.y[i, j] += dt*d2[i, j] + 0.0001*randn()
 		end
 	end
 	return nothing
