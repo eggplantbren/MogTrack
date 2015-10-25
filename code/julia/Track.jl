@@ -30,17 +30,16 @@ end
 Constructor. Input: num_dimensions, num_points
 """ ->
 function Track(num_dimensions::Int64, num_points::Int64)
-	return Track(num_dimensions, num_points, 1.0, 10.0,
+	return Track(num_dimensions, num_points, 1.0, 0.3,
 						Array(Float64, (num_points, num_points)),
 						Array(Float64, (num_points, num_points)),
 						Array(Float64, (num_points, )))
 end
 
 @doc """
-Initialise a Track. Calculates covariance matrix and
-generates the trajectory.
+Calculate covariance matrix
 """ ->
-function initialise!(track::Track)
+function calculate_C!(track::Track)
 	A2 = track.amplitude^2
 	pinv = 1.0/track.num_points
 	l2inv = 1.0/track.length_scale^2
@@ -60,6 +59,42 @@ function initialise!(track::Track)
 
 	# Do Cholesky decomposition
 	track.L = chol(track.C)'
+
+	return nothing
+end
+
+@doc """
+Generate realisation of trajectory
+""" ->
+function generate_y!(track::Track)
+	# Generate realisation
+	track.y = track.L*randn(track.num_points)
+	return nothing
+end
+
+
+@doc """
+Metropolis proposal, holding hyperparameters fixed and just
+moving the realisation.
+""" ->
+function perturb!(track::Track; theta=nothing)
+	# Make backup of old track
+	y_old = copy(track.y)
+
+	# Generate totally new track
+	generate_y!(track)
+
+	# Step size
+	if(theta == nothing)
+		theta = 2*pi*10.0^(-6.0*rand())
+	end
+	cos_theta = cos(theta)
+	sin_theta = sin(theta)
+
+	# AR(1) proposal
+	for(i in 1:track.num_points)
+		track.y[i] = cos_theta*y_old[i] + sin_theta*track.y[i]
+	end
 
 	return nothing
 end
