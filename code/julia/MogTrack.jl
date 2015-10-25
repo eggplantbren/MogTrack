@@ -13,8 +13,13 @@ type MogTrack
 	yc::Track
 	log_width::Track
 	theta::Track
+end
 
-
-
+@doc """
+Constructor, takes Track parameters as input
+""" ->
+function MogTrack(num_points::Int64)
+	return MogTrack(Track(num_points), Track(num_points), Track(num_points),
+					Track(num_points), Track(num_points), Track(num_points))
 end
 
