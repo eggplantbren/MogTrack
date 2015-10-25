@@ -4,10 +4,10 @@ A class defining a 2D elliptical gaussian
 type Gaussian
 	# All of the parameters
 	mass::Float64
-	width::Float64
 	q::Float64
 	xc::Float64
 	yc::Float64
+	width::Float64
 	theta::Float64
 
 	# Derived parameters
@@ -22,7 +22,8 @@ end
 Constructor taking a vector of five parameters
 """ ->
 function Gaussian(params::Vector{Float64})
-	gaussian = Gaussian(params[1], params[2], params[3], params[4], params[5], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+	gaussian = Gaussian(params[1], params[2], params[3], params[4], params[5],
+							params[6], 0.0, 0.0, 0.0, 0.0, 0.0)
 	calculate_derived!(gaussian)
 	return gaussian
 end
@@ -43,12 +44,13 @@ end
 Evaluate the gaussian at the position (x, y)
 """ ->
 function evaluate(gaussian::Gaussian, x::Float64, y::Float64)
-	xx = (x - gaussian.xc)*gaussian.cos_theta +
+	xx =  (x - gaussian.xc)*gaussian.cos_theta +
 			(y - gaussian.yc)*gaussian.sin_theta
 	yy = -(x - gaussian.xc)*gaussian.sin_theta +
 			(y - gaussian.yc)*gaussian.cos_theta
-	rsq = gaussian.q*x^2 + y^2*gaussian.qinv
+	rsq = gaussian.q*xx^2 + yy^2*gaussian.qinv
 	f = gaussian.coeff*exp(-0.5*rsq*gaussian.width2inv)
 	return f
 end
+
 
