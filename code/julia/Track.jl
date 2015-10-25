@@ -1,3 +1,7 @@
+# Old idea: use numerical solver for stochastic PDE
+# with periodic BCs as a proposal.
+# New idea: use periodic GP kernel.
+
 @doc """
 A class defining a trajectory in n-dimensional space
 with an AR(1) prior distribution and periodic boundary
@@ -49,17 +53,4 @@ function initialise!(track::Track)
 
 	return nothing
 end
-
-# Old idea: use numerical solver for stochastic PDE
-# with periodic BCs as a proposal.
-# New idea: use periodic GP kernel.
-
-using PyCall
-@pyimport matplotlib.pyplot as plt
-
-track = Track(1, 100)
-initialise!(track)
-
-plt.imshow(track.C, interpolation="nearest")
-plt.show()
 
