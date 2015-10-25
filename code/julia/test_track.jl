@@ -9,13 +9,16 @@ generate_y!(track)
 
 # Explore the prior
 plt.ion()
-for(i in 1:1000)
+steps = 1000
+for(i in 1:steps)
 	# Do a Metropolis proposal (prior is implicit)
 	perturb!(track, theta=0.2)
 
 	plt.hold(false)
-	plt.plot(track.y)
+	plt.plot(track.y, "bo-")
+	plt.xlim([-0.5, track.num_points - 0.5])
 	plt.ylim([-3.0, 3.0])
+	plt.title("Step $i/$steps")
 	plt.draw()
 end
 
