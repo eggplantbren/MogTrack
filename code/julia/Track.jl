@@ -3,14 +3,11 @@
 # New idea: use periodic GP kernel.
 
 @doc """
-A class defining a trajectory in n-dimensional space
-with an AR(1) prior distribution and periodic boundary
+A class defining a trajectory in 1-D space
+with a GP prior distribution and periodic boundary
 conditions.
 """ ->
 type Track
-	# Number of dimensions
-	num_dimensions::Int64
-
 	# Number of points in the trajectory
 	num_points::Int64
 
@@ -29,8 +26,8 @@ end
 @doc """
 Constructor. Input: num_dimensions, num_points
 """ ->
-function Track(num_dimensions::Int64, num_points::Int64)
-	return Track(num_dimensions, num_points, 1.0, 0.3,
+function Track(num_points::Int64)
+	return Track(num_points, 1.0, 0.3,
 						Array(Float64, (num_points, num_points)),
 						Array(Float64, (num_points, num_points)),
 						Array(Float64, (num_points, )))

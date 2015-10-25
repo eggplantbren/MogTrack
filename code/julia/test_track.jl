@@ -3,7 +3,7 @@ using PyCall
 include("Track.jl")
 
 # Create a Track
-track = Track(1, 100)
+track = Track(100)
 calculate_C!(track)
 generate_y!(track)
 
