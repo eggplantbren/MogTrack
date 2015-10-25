@@ -18,8 +18,9 @@ type Track
 	amplitude::Float64
 	length_scale::Float64
 
-	# Covariance matrix
+	# Covariance matrix and its cholesky decomposition
 	C::Array{Float64, 2}
+	L::Array{Float64, 2}
 
 	# The trajectory itself
 	y::Array{Float64, 1}
@@ -30,6 +31,7 @@ Constructor. Input: num_dimensions, num_points
 """ ->
 function Track(num_dimensions::Int64, num_points::Int64)
 	return Track(num_dimensions, num_points, 1.0, 10.0,
+						Array(Float64, (num_points, num_points)),
 						Array(Float64, (num_points, num_points)),
 						Array(Float64, (num_points, )))
 end
@@ -43,13 +45,21 @@ function initialise!(track::Track)
 	pinv = 1.0/track.num_points
 	l2inv = 1.0/track.length_scale^2
 
-#	Fill covariance matrix
+	# Fill covariance matrix
 	for(j in 1:track.num_points)
-		for(i in 1:j)
-			track.C[i, j] = A2*exp(-2*sin(pi*(i-j)*pinv)^2*l2inv)
-			track.C[j, i] = track.C[i, j]
+		for(i in 1:track.num_points)
+			track.C[i, j] = A2*exp(-2*sin(pi*abs(i-j)*pinv)^2*l2inv)
+			if(i == j)
+				# Small term for positive definiteness
+				track.C[i, j] += 1E-6*A2
+			else
+				track.C[j, i] = track.C[i, j]
+			end
 		end
 	end
+
+	# Do Cholesky decomposition
+	track.L = chol(track.C)'
 
 	return nothing
 end
