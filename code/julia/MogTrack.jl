@@ -6,6 +6,9 @@ A class representing a set of Tracks
 which define the parameters of gaussians
 """ ->
 type MogTrack
+	# Number of points in each track
+	num_points::Int64
+
 	# Tracks which determine gaussian parameters
 	log_mass::Track
 	logit_q::Track
@@ -19,7 +22,8 @@ end
 Constructor, takes Track parameters as input
 """ ->
 function MogTrack(num_points::Int64)
-	return MogTrack(Track(num_points), Track(num_points), Track(num_points),
+	return MogTrack(num_points,
+					Track(num_points), Track(num_points), Track(num_points),
 					Track(num_points), Track(num_points), Track(num_points))
 end
 
@@ -44,4 +48,27 @@ function from_prior!(mogtrack::MogTrack)
 	return nothing
 end
 
+
+@doc """
+Evaluate a MogTrack at position (x, y)
+""" ->
+function evaluate(mogtrack::MogTrack, x::Float64, y::Float64)
+	f = 0.0
+	params = Array(Float64, (6, ))
+
+	# Loop over the tracks
+	for(i in 1:mogtrack.num_points)
+		params[1] = exp(mogtrack.log_mass.y[i])
+		params[2] = exp(mogtrack.logit_q.y[i])/(1.0 + exp(mogtrack.logit_q.y[i]))
+		params[3] = mogtrack.xc.y[i]
+		params[4] = mogtrack.yc.y[i]
+		params[5] = exp(mogtrack.log_width.y[i])
+		params[6] = mogtrack.theta.y[i]
+
+		gaussian::Gaussian = Gaussian(params)
+		f += evaluate(gaussian, x, y)
+	end
+
+	return f
+end
 
