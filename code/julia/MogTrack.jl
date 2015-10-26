@@ -72,3 +72,26 @@ function evaluate(mogtrack::MogTrack, x::Float64, y::Float64)
 	return f
 end
 
+@doc """
+Do a Metropolis proposal.
+""" ->
+function perturb!(mogtrack::MogTrack)
+	which = rand(1:6)
+
+	if(which == 0)
+		track = mogtrack.log_mass
+	elseif(which == 1)
+		track = mogtrack.logit_q
+	elseif(which == 2)
+		track = mogtrack.xc
+	elseif(which == 3)
+		track = mogtrack.yc
+	elseif(which == 4)
+		track = mogtrack.log_width
+	else
+		track = mogtrack.theta
+	end
+	perturb!(track)
+	return nothing
+end
+
