@@ -1,6 +1,6 @@
 # Heavy tailed proposal
-function randh(size::Int64)
-	return 10.0.^(1.5 - 6.0*rand(size)).*randn(size)
+function randh()
+	return 10.0^(1.5 - 6.0*rand())*randn()
 end
 
 function logsumexp(x::Array{Float64, 1})

@@ -17,7 +17,7 @@ for(i in 1:steps)
 	plt.hold(false)
 	plt.plot(track.y, "bo-")
 	plt.xlim([-0.5, track.num_points - 0.5])
-	plt.ylim([-3.5*track.amplitude, 3.5*track.amplitude])
+	plt.ylim([-4.0, 4.0])
 	plt.title("Step $i/$steps")
 	plt.draw()
 end
