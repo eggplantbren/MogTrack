@@ -11,13 +11,17 @@ type MogTrack
 
 	# Tracks which determine gaussian parameters
 	tracks::Vector{Track}
+
+	# Shift and scale tracks
+	mu::Vector{Float64}
+	sig::Vector{Float64}
 end
 
 @doc """
 Constructor, takes Track parameters as input
 """ ->
 function MogTrack(num_points::Int64)
-	return MogTrack(num_points, fill(Track(num_points), 6))
+	return MogTrack(num_points, fill(Track(num_points), 6), zeros(6), ones(6))
 end
 
 @doc """
@@ -42,8 +46,10 @@ function evaluate(mogtrack::MogTrack, x::Float64, y::Float64)
 	# Loop over the tracks
 	for(i in 1:mogtrack.num_points)
 		for(j in 1:size(mogtrack.tracks)[1])
-			params[j] = mogtrack.tracks[j].y[i]
+			params[j] = mogtrack.mu[j] + mogtrack.sig[j]*mogtrack.tracks[j].y[i]
 		end
+
+		params[1] = exp(params[1])
 		params[2] = exp(params[2])/(1.0 + exp(params[2]))
 		params[5] = exp(params[5])
 
